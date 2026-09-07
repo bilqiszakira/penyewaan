@@ -1,0 +1,1 @@
+<?php include "../auth/cek_login.php";include "../koneksi.php";mysqli_query($conn,"DELETE FROM kategori WHERE id=".$_GET['id']);header("Location:index.php"); ?>
