@@ -1,0 +1,10 @@
+CREATE DATABASE IF NOT EXISTS penyewaan; USE penyewaan;
+CREATE TABLE users(id INT AUTO_INCREMENT PRIMARY KEY,username VARCHAR(50) UNIQUE NOT NULL,password VARCHAR(255) NOT NULL,nama VARCHAR(100) NOT NULL,role ENUM('admin','petugas') NOT NULL DEFAULT 'petugas');
+INSERT INTO users(username,password,nama,role) VALUES('admin',MD5('admin123'),'Administrator','admin'),('petugas',MD5('petugas123'),'Petugas','petugas');
+CREATE TABLE kategori(id INT AUTO_INCREMENT PRIMARY KEY,nama_kategori VARCHAR(100) NOT NULL);
+INSERT INTO kategori(nama_kategori) VALUES('Elektronik'),('Kamera'),('Alat Outdoor'),('Kendaraan');
+CREATE TABLE barang(id INT AUTO_INCREMENT PRIMARY KEY,kode_barang VARCHAR(30) UNIQUE NOT NULL,nama_barang VARCHAR(100) NOT NULL,id_kategori INT NOT NULL,harga_sewa INT NOT NULL,stok INT NOT NULL DEFAULT 0,kondisi VARCHAR(50) DEFAULT 'Baik',FOREIGN KEY(id_kategori) REFERENCES kategori(id));
+CREATE TABLE pelanggan(id INT AUTO_INCREMENT PRIMARY KEY,kode_pelanggan VARCHAR(30) UNIQUE NOT NULL,nama VARCHAR(100) NOT NULL,alamat TEXT NOT NULL,no_hp VARCHAR(20) NOT NULL);
+CREATE TABLE transaksi(id INT AUTO_INCREMENT PRIMARY KEY,kode_transaksi VARCHAR(30) UNIQUE NOT NULL,id_pelanggan INT NOT NULL,tanggal_sewa DATE NOT NULL,tanggal_rencana_kembali DATE NOT NULL,status ENUM('Disewa','Dikembalikan') DEFAULT 'Disewa',total_harga INT NOT NULL DEFAULT 0,FOREIGN KEY(id_pelanggan) REFERENCES pelanggan(id));
+CREATE TABLE detail_transaksi(id INT AUTO_INCREMENT PRIMARY KEY,id_transaksi INT NOT NULL,id_barang INT NOT NULL,jumlah INT NOT NULL,harga_sewa INT NOT NULL,subtotal INT NOT NULL,FOREIGN KEY(id_transaksi) REFERENCES transaksi(id) ON DELETE CASCADE,FOREIGN KEY(id_barang) REFERENCES barang(id));
+CREATE TABLE pengembalian(id INT AUTO_INCREMENT PRIMARY KEY,id_transaksi INT NOT NULL,tanggal_kembali DATE NOT NULL,denda INT DEFAULT 0,catatan TEXT,FOREIGN KEY(id_transaksi) REFERENCES transaksi(id) ON DELETE CASCADE);
